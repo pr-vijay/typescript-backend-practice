@@ -78,7 +78,7 @@ interface DatabaseConfig {
   host: string;
   port: number;
   credentials?: {
-    username: string;
+    username?: string;
     password?: string;
   };
 }

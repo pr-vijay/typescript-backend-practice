@@ -106,7 +106,7 @@ function throwCriticalError(message: string): never {
 function convertFahrenheitToCelsius(fahrenheit: number): number {
   // TODO: Implement the conversion logic and return a number.
   // Replace the return statement below with your formula.
-  return 0; 
+  return (fahrenheit - 32) * 5 / 9; 
 }
 
 /**
@@ -122,8 +122,11 @@ function convertFahrenheitToCelsius(fahrenheit: number): number {
  * "The weather in London is 18°C. Enjoy the sun!" (if isRaining is false)
  */
 function formatWeatherReport(city: string, temperatureCelsius: number, isRaining: boolean): string {
-  // TODO: Implement the message formatting logic.
-  return "";
+  if (isRaining) {
+    return `The weather in ${city} is ${temperatureCelsius}°C. Bring an umbrella!`;
+  } else {
+    return `The weather in ${city} is ${temperatureCelsius}°C. Enjoy the sun!`;
+  }
 }
 
 

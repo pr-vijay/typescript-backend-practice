@@ -1,0 +1,68 @@
+// MODULE 4: Databases and ORMs
+// FILE: schema.prisma
+//
+// ==========================================
+// WHAT IS PRISMA AND WHY DO WE USE IT?
+// ==========================================
+// Prisma is a modern database toolkit (ORM - Object Relational Mapper) for Node.js and TypeScript.
+// Instead of writing raw SQL strings like "SELECT * FROM users WHERE id = $1" 
+// which are easy to mess up and return untyped results, Prisma auto-generates
+// a type-safe client based on this schema.
+//
+// If you query user profiles, Prisma returns them with the exact matching TypeScript types automatically!
+//
+// ==========================================
+// REAL-LIFE ANALOGY: Translation Dictionary
+// ==========================================
+// Think of the database as a machine that speaks SQL.
+// Think of your app code as speaking TypeScript.
+// Prisma acts as the translator. The `schema.prisma` is the blueprint document 
+// detailing all translation schemas so both sides agree exactly on data shapes.
+
+datasource db {
+  // Defines the database type (e.g. postgresql, mysql, sqlite, mongodb)
+  provider = "sqlite"
+  // The connection string URL to your database (using sqlite local file for easy setup!)
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ==========================================
+// DATABASE MODEL DEFINITIONS
+// ==========================================
+
+model User {
+  // @id: Defines this field as the Primary Key
+  // @default(autoincrement()): Database automatically increments the ID for each new record (1, 2, 3...)
+  id        Int      @id @default(autoincrement())
+  
+  // @unique: Ensures no two users share the same email address
+  email     String   @unique
+  
+  name      String?  // The "?" makes this field optional/nullable in the database.
+  
+  role      String   @default("USER")
+  
+  createdAt DateTime @default(now())
+
+  // Relation: A user can write multiple blog posts (One-to-Many relation)
+  posts     Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  
+  // Foreign Key linking this post to a specific User (author)
+  authorId  Int
+  
+  // Defines the relational mapping: 
+  // 'authorId' points to the 'id' of a 'User' model.
+  // @relation handles link integrity and makes it queryable.
+  author    User     @relation(fields: [authorId], references: [id])
+}

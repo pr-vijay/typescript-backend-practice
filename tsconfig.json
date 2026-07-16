@@ -1,0 +1,68 @@
+{
+  "compilerOptions": {
+    /* Target & Environment Configuration */
+    // target: Defines which version of JavaScript the compiler emits. 
+    // Node.js v20 supports almost all ES2022 features, so targeting ES2022 is ideal.
+    "target": "es2022",
+    // module: Specifies what module code generation method to use.
+    // 'commonjs' is standard for traditional Node.js. If you want modern ESM, you'd use 'NodeNext'.
+    "module": "commonjs",
+    // lib: Tells TypeScript what built-in environment declarations (like ES2022 features, DOM, etc.) are available.
+    // Since we're doing backend Node.js, we don't include "dom" to prevent accidental usage of browser globals (like window, document).
+    "lib": ["es2022"],
+
+    /* Strict Type-Checking Options */
+    // strict: Enables a wide range of strong type-checking behaviors. 
+    // This is HIGHLY recommended for production to catch bugs at build time.
+    "strict": true,
+    // noImplicitAny: Error on expressions and declarations with an implied 'any' type.
+    // Forces you to explicitly declare type signatures if TypeScript cannot infer them.
+    "noImplicitAny": true,
+    // strictNullChecks: When enabled, 'null' and 'undefined' have their own distinct types.
+    // This prevents the famous "Cannot read property of undefined" errors at runtime.
+    "strictNullChecks": true,
+    // strictFunctionTypes: Ensures parameters of functions are checked more stringently.
+    "strictFunctionTypes": true,
+    // noImplicitThis: Raises an error on 'this' expressions with an implied 'any' type.
+    "noImplicitThis": true,
+    // alwaysStrict: Parses files in JavaScript's strict mode and emits "use strict" at the top.
+    "alwaysStrict": true,
+
+    /* Linter/Code Quality Checks */
+    // noUnusedLocals: Report errors on unused local variables.
+    "noUnusedLocals": false,
+    // noUnusedParameters: Report errors on unused function parameters.
+    "noUnusedParameters": false,
+    // noImplicitReturns: Ensure that all code paths in a function return a value.
+    "noImplicitReturns": true,
+    // noFallthroughCasesInSwitch: Report errors for fallthrough cases in switch statements.
+    "noFallthroughCasesInSwitch": true,
+
+    /* Module Resolution Settings */
+    // moduleResolution: How TypeScript looks up files for imports. 
+    // 'node' style resolution is standard for Node.js modules.
+    "moduleResolution": "node",
+    // esModuleInterop: Enables interoperability between CommonJS and ES Modules imports.
+    // Lets you do: import express from 'express' instead of: import * as express from 'express'.
+    "esModuleInterop": true,
+    // allowSyntheticDefaultImports: Allows default imports from modules with no default export.
+    "allowSyntheticDefaultImports": true,
+    // forceConsistentCasingInFileNames: Disallows inconsistently-cased references to the same file.
+    // Crucial when working across Windows (case-insensitive) and Linux/macOS (case-sensitive).
+    "forceConsistentCasingInFileNames": true,
+
+    /* Advanced Compilation Options */
+    // skipLibCheck: Skip type checking of declaration files (.d.ts) in node_modules.
+    // Speeds up compilation significantly and ignores version mismatch errors in external libraries.
+    "skipLibCheck": true,
+    // outDir: Redirect output structure to the directory.
+    "outDir": "./dist",
+    // sourceMap: Generates corresponding '.map' files. 
+    // Allows you to debug typescript files directly using source code in debuggers.
+    "sourceMap": true
+  },
+  // include: Tells the compiler which files to compile.
+  "include": ["**/*.ts"],
+  // exclude: Files or folders the compiler should ignore.
+  "exclude": ["node_modules", "dist"]
+}

@@ -18,6 +18,23 @@
  * and rest parameters using the spread operator '...'.
  * 
  * ==========================================
+ * ARROW FUNCTIONS
+ * ==========================================
+ * Arrow functions (introduced in ES6) are highly popular in JavaScript and TypeScript.
+ * They offer a shorter syntax and preserve the lexical scope of `this` (they don't bind their own `this`).
+ * 
+ * In TypeScript, they are typed by adding parameter and return types:
+ *   const myFunction = (param: type): returnType => { ... }
+ * 
+ * Implicit Return: If the function body consists of a single expression, you can omit
+ * the curly braces and the `return` keyword. TypeScript still infers/checks the return type:
+ *   const double = (n: number): number => n * 2;
+ * 
+ * Function Type Aliases: You can define the structure of a function separately as a type:
+ *   type CallbackType = (success: boolean) => void;
+ *   const handleCompletion: CallbackType = (success) => { ... };
+ * 
+ * ==========================================
  * LOOPS IN TYPESCRIPT
  * ==========================================
  * Loops (for, while, for...of, for...in) behave exactly as they do in JavaScript.
@@ -38,8 +55,19 @@ function greetUser(name: string, isAdmin?: boolean, greeting: string = "Hello"):
   return `${greeting}, ${name}${role}!`;
 }
 
-// Arrow function typing
-const multiply = (a: number, b: number): number => a * b;
+// Arrow function with standard syntax and type annotations
+const multiply = (a: number, b: number): number => {
+  return a * b;
+};
+
+// Arrow function with implicit return (no curly braces, no 'return' keyword)
+const double = (n: number): number => n * 2;
+
+// Function Type Signature / Alias
+type MathOperation = (x: number, y: number) => number;
+
+// Implementing the function signature
+const subtract: MathOperation = (x, y) => x - y; // Types for x and y are inferred from MathOperation!
 
 // Rest parameters
 function sumNumbers(...nums: number[]): number {

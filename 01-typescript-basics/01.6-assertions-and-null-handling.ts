@@ -92,8 +92,10 @@ interface DatabaseConfig {
  *   - The output format should be: "postgresql://{username}@{host}:{port}"
  */
 function buildConnectionString(config: Partial<DatabaseConfig> | null | undefined): string {
-  // TODO: Use Optional Chaining and Nullish Coalescing to safely construct the string.
-  return "";
+  const username = config?.credentials?.username ?? "guest";
+  const host = config?.host;
+  const port = config?.port ?? 5432;
+  return `postgresql://${username}@${host}:${port}`;
 }
 
 /**
@@ -104,10 +106,11 @@ function buildConnectionString(config: Partial<DatabaseConfig> | null | undefine
  * 3. Return the casted DatabaseConfig.
  */
 function parseConfigPayload(payload: unknown): DatabaseConfig {
-  // TODO: Assert payload to DatabaseConfig.
-  // TODO: Check if host exists, otherwise throw an error.
-  // TODO: Return the casted object.
-  throw new Error("Not implemented");
+  const config = payload as DatabaseConfig;
+  if (!config?.host) {
+    throw new Error("Missing host");
+  }
+  return config;
 }
 
 

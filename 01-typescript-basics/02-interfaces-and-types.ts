@@ -23,7 +23,7 @@
  * the object you pass MUST contain the matching fields. This is called "Structural Typing".
  */
 
-export {};
+export { };
 
 // ============================================================================
 // 1. INTERFACES (Object blueprints)
@@ -34,7 +34,7 @@ interface User {
   username: string;
   email: string;
   // Optional property (notice the '?'): This property is allowed to be missing or undefined!
-  phoneNumber?: string; 
+  phoneNumber?: string;
   // Readonly property: Once set, it CANNOT be modified.
   readonly registeredAt: Date;
 }
@@ -118,6 +118,10 @@ type AuditedEmployee = EmployeeExtended & HasTimestamps;
 //   - price (number)
 //   - discountCode (string, optional)
 interface Product {
+  id: number;
+  name: string;
+  price: number;
+  discountCode?: string;
   // TODO: Add fields here
 }
 
@@ -125,7 +129,7 @@ interface Product {
 //   - "pending"
 //   - "completed"
 //   - "failed"
-type PaymentStatus = any; // TODO: Replace 'any' with a union of the three strings
+type PaymentStatus = "pending" | "completed" | "failed"; // TODO: Replace 'any' with a union of the three strings
 
 // Step 3: Define an 'Order' interface.
 // It should have:
@@ -134,6 +138,10 @@ type PaymentStatus = any; // TODO: Replace 'any' with a union of the three strin
 //   - status (PaymentStatus)
 interface Order {
   // TODO: Add fields here
+  orderID: string;
+  items: Product[];
+  status: PaymentStatus
+
 }
 
 /**
@@ -142,8 +150,18 @@ interface Order {
  * Otherwise, use the standard product price.
  */
 function calculateOrderTotal(order: Order): number {
+
   // TODO: Implement the calculation logic.
-  return 0;
+  let total = 0;
+  for (let i = 0; i < order.items.length; i++) {
+    if (order.items[i].discountCode === 'SAVE10') {
+      total += order.items[i].price * 0.9
+    }
+    else {
+      total += order.items[i].price
+    }
+  }
+  return total;
 }
 
 

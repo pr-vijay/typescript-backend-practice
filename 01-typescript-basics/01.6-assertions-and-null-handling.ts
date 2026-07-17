@@ -107,7 +107,7 @@ function buildConnectionString(config: Partial<DatabaseConfig> | null | undefine
  */
 function parseConfigPayload(payload: unknown): DatabaseConfig {
   const config = payload as DatabaseConfig;
-  if (!config.host) {
+  if (!config?.host) {
     throw new Error("Missing host");
   }
   return config;

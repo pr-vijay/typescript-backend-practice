@@ -43,7 +43,7 @@
  * knows that the iterated element is a `string`.
  */
 
-export {};
+export { };
 
 // ============================================================================
 // 1. FUNCTIONS EXAMPLES
@@ -101,11 +101,11 @@ for (const lang of languages) {
  *   - Output: number
  */
 function calculateFactorial(n: number): number {
-  let result = 1;
+  let facto: number = 1;
   for (let i = 1; i <= n; i++) {
-    result *= i;
+    facto = facto * i;
   }
-  return result;
+  return facto;
 }
 
 /**
@@ -120,13 +120,14 @@ function calculateFactorial(n: number): number {
  *   - Output: string
  */
 function findLongestWord(words: string[]): string {
-  let longest = "";
-  for (const word of words) {
-    if (word.length > longest.length) {
-      longest = word;
+  // TODO: Implement the logic to find the longest word using a loop.
+  let maxlen: string = "";
+  for (let i = 0; i < words.length; i++) {
+    if (words[i].length > maxlen.length) {
+      maxlen = words[i];
     }
   }
-  return longest;
+  return maxlen;
 }
 
 

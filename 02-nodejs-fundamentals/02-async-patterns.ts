@@ -146,11 +146,22 @@ interface UserProfileReport {
  */
 async function aggregateUserProfile(userId: number): Promise<UserProfileReport> {
   try {
-    // TODO: Write code here.
-    return {} as any;
+    const [details, orders, reviewScores] = await Promise.all([
+      fetchDetails(userId),
+      fetchOrders(userId),
+      fetchReviewScores(userId)
+    ]);
+
+    const totalOrdersAmount = orders.reduce((sum, order) => sum + order.amount, 0);
+
+    return {
+      userId: details.id,
+      username: details.username,
+      totalOrdersAmount,
+      averageReviewScore: reviewScores.score
+    };
   } catch (err) {
-    // TODO: Handle failure and throw a new Error("Failed to aggregate profile")
-    throw err;
+    throw new Error("Failed to aggregate profile");
   }
 }
 

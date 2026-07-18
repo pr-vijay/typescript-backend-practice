@@ -98,6 +98,7 @@ class AnalyticsTracker extends EventEmitter {
    */
   public trackEvent(eventName: string, metadata: Record<string, any>): void {
     // TODO: Emit the event using this.emit, passing metadata as the event argument.
+    this.emit(eventName, metadata);
   }
 }
 

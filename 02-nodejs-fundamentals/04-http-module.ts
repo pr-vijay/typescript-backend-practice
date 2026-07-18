@@ -131,13 +131,26 @@ function buildProductHandler(
     { id: 2, name: "Wireless Mouse", price: 59.99 }
   ];
 
-  // TODO: Check req.method and req.url to handle the routes described above.
-  // Remember to:
-  //   1. Set Content-Type header to "application/json"
-  //   2. Use res.writeHead(statusCode, headers) 
-  //   3. Use res.end(JSON.stringify(data)) to send the response
+  res.setHeader("Content-Type", "application/json");
+
+  if (req.method === "GET" && req.url === "/api/products") {
+    res.writeHead(200);
+    res.end(JSON.stringify(products));
+    return;
+  }
+
+  if (req.method === "GET" && req.url?.startsWith("/api/products/")) {
+    const parts = req.url.split("/");
+    const id = parseInt(parts[parts.length - 1], 10);
+    const product = products.find(p => p.id === id);
+    if (product) {
+      res.writeHead(200);
+      res.end(JSON.stringify(product));
+      return;
+    }
+  }
   
-  res.writeHead(404, { "Content-Type": "application/json" });
+  res.writeHead(404);
   res.end(JSON.stringify({ error: "Not found" }));
 }
 
@@ -162,7 +175,9 @@ function createMockReq(method: string, url: string): http.IncomingMessage {
 }
 
 function createMockRes(): http.ServerResponse & { _body: string; _statusCode: number } {
-  const res = new http.ServerResponse(null as any) as any;
+  const mockReq = new http.IncomingMessage(null as any);
+  mockReq.method = "GET";
+  const res = new http.ServerResponse(mockReq) as any;
   res._body = "";
   res._statusCode = 200;
   res.writeHead = (code: number) => { res._statusCode = code; return res; };

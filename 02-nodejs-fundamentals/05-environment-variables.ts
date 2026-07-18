@@ -144,9 +144,15 @@ console.log(`[Config] Logging: ${config.enableLogging}`);
  */
 function validateConfig(cfg: AppConfig): string[] {
   const errors: string[] = [];
-  // TODO: Check port range (1024-65535). If invalid, push error message.
-  // TODO: Check databaseUrl prefix. If invalid, push error message.
-  // TODO: Check jwtSecret length. If too short, push error message.
+  if (cfg.port < 1024 || cfg.port > 65535) {
+    errors.push("Port must be between 1024 and 65535");
+  }
+  if (!cfg.databaseUrl.startsWith("postgresql://") && !cfg.databaseUrl.startsWith("mysql://")) {
+    errors.push("databaseUrl must start with postgresql:// or mysql://");
+  }
+  if (cfg.jwtSecret.length < 16) {
+    errors.push("jwtSecret must be at least 16 characters long");
+  }
   return errors;
 }
 
@@ -161,7 +167,7 @@ function validateConfig(cfg: AppConfig): string[] {
  */
 function generateEnvExample(variableNames: string[]): string {
   // TODO: Join all variable names with "=\n" to create the template.
-  return "";
+  return variableNames.map(name => `${name}=`).join("\n");
 }
 
 

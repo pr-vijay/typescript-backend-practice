@@ -21,6 +21,8 @@
  *   It must always contain exactly two numbers in that order: [latitude, longitude].
  */
 
+import { log } from "console";
+
 export {};
 
 // ============================================================================
@@ -82,7 +84,7 @@ enum LogLevel {
 //   - index 0: A timestamp as a Date object.
 //   - index 1: The log level (using our LogLevel enum).
 //   - index 2: The log message as a string.
-type LogEntry = any; // TODO: Replace 'any' with the tuple definition: [Date, LogLevel, string]
+type LogEntry = [Date: Date, Loglevel: LogLevel, message: string]; // TODO: Replace 'any' with the tuple definition: [Date, LogLevel, string]
 
 /**
  * Step 3: Write a function that processes an array of log entries.
@@ -90,7 +92,14 @@ type LogEntry = any; // TODO: Replace 'any' with the tuple definition: [Date, Lo
  */
 function countErrorLogs(logs: LogEntry[]): number {
   // TODO: Implement the counting logic
-  return 0;
+  let count: number = 0;
+  for (const log of logs) {
+    if (log[1] === LogLevel.Error) {
+      count++;
+    }
+  }
+
+  return count;
 }
 
 

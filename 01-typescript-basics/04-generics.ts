@@ -102,6 +102,7 @@ class DataCache<T> {
    */
   public set(key: string, value: T): void {
     // TODO: Store value in the cache object under the given key.
+    this.cache[key] = value;
   }
 
   /**
@@ -110,7 +111,7 @@ class DataCache<T> {
    */
   public get(key: string): T | undefined {
     // TODO: Retrieve and return the value for key.
-    return undefined;
+    return this.cache[key];
   }
 
   /**
@@ -118,6 +119,7 @@ class DataCache<T> {
    */
   public delete(key: string): void {
     // TODO: Remove the item from cache.
+    delete this.cache[key];
   }
 }
 

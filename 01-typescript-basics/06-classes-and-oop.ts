@@ -168,12 +168,16 @@ class AppConfig implements Serializable {
 //   - A concrete method 'getAge()' that returns current year minus this.year
 //   - An abstract method 'calculateMaintenanceCost()' that returns a number
 abstract class Vehicle {
-  // TODO: Add properties and constructor
-  // TODO: Implement getAge()
-  // TODO: Declare abstract calculateMaintenanceCost()
+  protected brand: string;
+  protected year: number;
+
+  constructor(brand: string = "Generic", year: number = 2020) {
+    this.brand = brand;
+    this.year = year;
+  }
 
   getAge(): number {
-    return 0; // TODO: Replace with actual calculation
+    return new Date().getFullYear() - this.year;
   }
 
   abstract calculateMaintenanceCost(): number;
@@ -184,10 +188,15 @@ abstract class Vehicle {
 //   - Implements calculateMaintenanceCost():
 //     Formula: mileage * 0.05 + (getAge() * 100)
 class Car extends Vehicle {
-  // TODO: Implement
+  private mileage: number;
+
+  constructor(brand: string = "CarBrand", year: number = 2020, mileage: number = 1000) {
+    super(brand, year);
+    this.mileage = mileage;
+  }
 
   calculateMaintenanceCost(): number {
-    return 0; // TODO: Replace with formula
+    return this.mileage * 0.05 + (this.getAge() * 100);
   }
 }
 
@@ -196,10 +205,15 @@ class Car extends Vehicle {
 //   - Implements calculateMaintenanceCost():
 //     Formula: cargoCapacityTons * 200 + (getAge() * 150)
 class Truck extends Vehicle {
-  // TODO: Implement
+  private cargoCapacityTons: number;
+
+  constructor(brand: string = "TruckBrand", year: number = 2018, cargoCapacityTons: number = 5) {
+    super(brand, year);
+    this.cargoCapacityTons = cargoCapacityTons;
+  }
 
   calculateMaintenanceCost(): number {
-    return 0; // TODO: Replace with formula
+    return this.cargoCapacityTons * 200 + (this.getAge() * 150);
   }
 }
 

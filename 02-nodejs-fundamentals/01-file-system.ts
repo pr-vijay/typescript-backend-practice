@@ -88,7 +88,7 @@ class LoggerService {
 
   constructor(fileName: string) {
     // TODO: Resolve the file path inside the current directory (__dirname) using the given fileName.
-    this.logFilePath = ""; 
+    this.logFilePath = path.join(__dirname, fileName); 
   }
 
   /**
@@ -101,6 +101,7 @@ class LoggerService {
     const timestamp = new Date().toISOString();
     const logLine = `[${timestamp}] - ${message}\n`;
     // TODO: Append logLine to this.logFilePath.
+    await fs.appendFile(this.logFilePath, logLine, "utf-8");
   }
 
   /**
@@ -110,7 +111,11 @@ class LoggerService {
   public async readLogs(): Promise<string> {
     // TODO: Check if file exists. If it doesn't, return "".
     // If it does exist, read the file and return its string content.
-    return "";
+    try {
+      return await fs.readFile(this.logFilePath, "utf-8");
+    } catch (err) {
+      return "";
+    }
   }
 
   /**
@@ -118,6 +123,11 @@ class LoggerService {
    */
   public async clearLogs(): Promise<void> {
     // TODO: Delete the file. Handle cases where the file might not exist by wrapping it in a try-catch.
+    try {
+      await fs.unlink(this.logFilePath);
+    } catch (err) {
+      // Ignore error if file doesn't exist
+    }
   }
 }
 

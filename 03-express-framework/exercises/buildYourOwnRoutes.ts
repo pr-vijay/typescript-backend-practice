@@ -287,11 +287,31 @@ app.delete("/api/products/:id", (req: Request, res: Response) => {
  * Formula: newPrice = oldPrice * (1 - discountPercentage / 100) (round to 2 decimal places)
  */
 app.patch("/api/products/:id/discount", (req: Request, res: Response) => {
-  // TODO: Find the product by ID.
-  // TODO: Validate discountPercentage from req.body.
-  // TODO: Calculate the discounted price and update the product.
-  // TODO: Return 200 with the updated product.
-  res.status(501).json({ status: "error", message: "Not implemented. Practice writing this!" });
+  const id = parseInt(req.params.id, 10);
+  const product = products.find((p) => p.id === id);
+
+  if (!product) {
+    res.status(404).json({ status: "error", message: "Product not found" });
+    return;
+  }
+
+  const { discountPercentage } = req.body;
+
+  if (
+    discountPercentage === undefined ||
+    typeof discountPercentage !== "number" ||
+    discountPercentage < 1 ||
+    discountPercentage > 99
+  ) {
+    res.status(400).json({ status: "error", message: "Invalid discount percentage" });
+    return;
+  }
+
+  // Calculate new price: oldPrice * (1 - discountPercentage / 100)
+  const newPrice = product.price * (1 - discountPercentage / 100);
+  product.price = parseFloat(newPrice.toFixed(2));
+
+  res.status(200).json({ status: "success", data: product });
 });
 
 

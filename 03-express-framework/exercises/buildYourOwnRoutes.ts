@@ -78,10 +78,65 @@ let nextId = 4; // Auto-incrementing ID counter
  * Response format: { status: "success", results: N, data: [...] }
  */
 app.get("/api/products", (req: Request, res: Response) => {
-  // TODO: Read optional query param req.query.category
-  // If category is provided, filter products by that category.
-  // If not, return all products.
-  // Send response with status 200.
+  const category = req.query.category;
+  const filteredProducts = category
+    ? products.filter((p) => p.category === category)
+    : products;
+  
+  res.status(200).json({ 
+    status: "success", 
+    results: filteredProducts.length, 
+    data: filteredProducts 
+  });
+});
+
+/**
+ * ----------------------------------------------------------------------------
+ * 💡 CHALLENGE PRACTICE PROBLEM: GET /api/products/stats
+ * ----------------------------------------------------------------------------
+ * Write an endpoint that returns a statistical summary of all products.
+ * 
+ * Expected Route: GET /api/products/stats
+ * Response format (200 OK):
+ * {
+ *   status: "success",
+ *   data: {
+ *     totalCount: number,     // Total number of products
+ *     averagePrice: number,   // Average price of all products (rounded to 2 decimal places)
+ *     categoryCounts: {       // Count of products per category
+ *       electronics: number,
+ *       furniture: number,
+ *       ...
+ *     }
+ *   }
+ * }
+ * 
+ * ⚠️ CRITICAL TEACHING POINT: Order of Routes!
+ * In Express, routes are matched in the order they are defined.
+ * If you define GET /api/products/:id BEFORE GET /api/products/stats,
+ * Express will match "/api/products/stats" to "/api/products/:id" (treating "stats" as the id)!
+ * 
+ * To prevent this, always place static routes (/api/products/stats) BEFORE
+ * dynamic parameter routes (/api/products/:id).
+ */
+app.get("/api/products/stats", (req: Request, res: Response) => {
+  const totalCount = products.length;
+  const totalSum = products.reduce((sum, p) => sum + p.price, 0);
+  const averagePrice = totalCount > 0 ? parseFloat((totalSum / totalCount).toFixed(2)) : 0;
+  
+  const categoryCounts = products.reduce((acc: Record<string, number>, p) => {
+    acc[p.category] = (acc[p.category] || 0) + 1;
+    return acc;
+  }, {});
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      totalCount,
+      averagePrice,
+      categoryCounts
+    }
+  });
 });
 
 /**
@@ -94,10 +149,15 @@ app.get("/api/products", (req: Request, res: Response) => {
  * Hint: req.params.id is a STRING. Convert to number with parseInt().
  */
 app.get("/api/products/:id", (req: Request, res: Response) => {
-  // TODO: Parse the ID from req.params.id
-  // Find the product in the array.
-  // If not found, return 404.
-  // If found, return 200 with the product.
+  const id = parseInt(req.params.id, 10);
+  const product = products.find((p) => p.id === id);
+
+  if (!product) {
+    res.status(404).json({ status: "error", message: "Product not found" });
+    return;
+  }
+
+  res.status(200).json({ status: "success", data: product });
 });
 
 /**
@@ -114,11 +174,31 @@ app.get("/api/products/:id", (req: Request, res: Response) => {
  * If valid: status 201, { status: "success", data: newProduct }
  */
 app.post("/api/products", (req: Request, res: Response) => {
-  // TODO: Extract name, price, category from req.body.
-  // Validate the inputs.
-  // Create a new product with auto-incremented ID.
-  // Push to the products array.
-  // Return 201 with the new product.
+  const { name, price, category } = req.body;
+
+  // Validation
+  if (!name || typeof name !== "string" || name.trim() === "") {
+    res.status(400).json({ status: "error", message: "Name must be a non-empty string" });
+    return;
+  }
+  if (price === undefined || typeof price !== "number" || price <= 0) {
+    res.status(400).json({ status: "error", message: "Price must be a positive number" });
+    return;
+  }
+  if (!category || typeof category !== "string" || category.trim() === "") {
+    res.status(400).json({ status: "error", message: "Category must be a non-empty string" });
+    return;
+  }
+
+  const newProduct: Product = {
+    id: nextId++,
+    name,
+    price,
+    category
+  };
+
+  products.push(newProduct);
+  res.status(201).json({ status: "success", data: newProduct });
 });
 
 /**
@@ -132,10 +212,41 @@ app.post("/api/products", (req: Request, res: Response) => {
  * If NOT found: Return 404.
  */
 app.put("/api/products/:id", (req: Request, res: Response) => {
-  // TODO: Find the product by ID.
-  // If not found, return 404.
-  // Update only the fields that are present in req.body.
-  // Return the updated product.
+  const id = parseInt(req.params.id, 10);
+  const product = products.find((p) => p.id === id);
+
+  if (!product) {
+    res.status(404).json({ status: "error", message: "Product not found" });
+    return;
+  }
+
+  const { name, price, category } = req.body;
+
+  if (name !== undefined) {
+    if (typeof name !== "string" || name.trim() === "") {
+      res.status(400).json({ status: "error", message: "Name must be a non-empty string" });
+      return;
+    }
+    product.name = name;
+  }
+
+  if (price !== undefined) {
+    if (typeof price !== "number" || price <= 0) {
+      res.status(400).json({ status: "error", message: "Price must be a positive number" });
+      return;
+    }
+    product.price = price;
+  }
+
+  if (category !== undefined) {
+    if (typeof category !== "string" || category.trim() === "") {
+      res.status(400).json({ status: "error", message: "Category must be a non-empty string" });
+      return;
+    }
+    product.category = category;
+  }
+
+  res.status(200).json({ status: "success", data: product });
 });
 
 /**
@@ -146,10 +257,41 @@ app.put("/api/products/:id", (req: Request, res: Response) => {
  * If NOT found: Return 404.
  */
 app.delete("/api/products/:id", (req: Request, res: Response) => {
-  // TODO: Find the product index by ID.
-  // If not found, return 404.
-  // Splice it from the array.
-  // Return success message.
+  const id = parseInt(req.params.id, 10);
+  const index = products.findIndex((p) => p.id === id);
+
+  if (index === -1) {
+    res.status(404).json({ status: "error", message: "Product not found" });
+    return;
+  }
+
+  products.splice(index, 1);
+  res.status(200).json({ status: "success", message: "Product deleted" });
+});
+
+/**
+ * ----------------------------------------------------------------------------
+ * 💡 CHALLENGE PRACTICE PROBLEM 2: PATCH /api/products/:id/discount
+ * ----------------------------------------------------------------------------
+ * Write an endpoint that applies a discount to a product's price.
+ * 
+ * Expected Route: PATCH /api/products/:id/discount
+ * Expected Body: { discountPercentage: number } (e.g. 10 for 10% discount)
+ * 
+ * Validation:
+ *   - discountPercentage must be a number between 1 and 99.
+ * If validation fails: status 400, { status: "error", message: "Invalid discount percentage" }
+ * If product not found: status 404, { status: "error", message: "Product not found" }
+ * If success: status 200, { status: "success", data: updatedProduct }
+ * 
+ * Formula: newPrice = oldPrice * (1 - discountPercentage / 100) (round to 2 decimal places)
+ */
+app.patch("/api/products/:id/discount", (req: Request, res: Response) => {
+  // TODO: Find the product by ID.
+  // TODO: Validate discountPercentage from req.body.
+  // TODO: Calculate the discounted price and update the product.
+  // TODO: Return 200 with the updated product.
+  res.status(501).json({ status: "error", message: "Not implemented. Practice writing this!" });
 });
 
 
@@ -161,10 +303,12 @@ app.listen(PORT, () => {
   console.log(`\n🚀 Exercise Server running at http://localhost:${PORT}`);
   console.log(`\n📋 Test your endpoints:`);
   console.log(`   GET    http://localhost:${PORT}/api/products`);
+  console.log(`   GET    http://localhost:${PORT}/api/products/stats`);
   console.log(`   GET    http://localhost:${PORT}/api/products/1`);
   console.log(`   GET    http://localhost:${PORT}/api/products?category=electronics`);
   console.log(`   POST   http://localhost:${PORT}/api/products  (body: { "name": "Webcam", "price": 79.99, "category": "electronics" })`);
   console.log(`   PUT    http://localhost:${PORT}/api/products/1  (body: { "price": 149.99 })`);
+  console.log(`   PATCH  http://localhost:${PORT}/api/products/1/discount (body: { "discountPercentage": 10 })`);
   console.log(`   DELETE http://localhost:${PORT}/api/products/3`);
   console.log(`\nPress Ctrl+C to stop.\n`);
 });
